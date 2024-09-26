@@ -1,0 +1,72 @@
+{% include "header.html" %}
+
+<div>
+    <div>
+
+        <!-- Page content-->
+        <div class="container-fluid">
+            <h1 class="mt-4">TO DO:</h1>
+            <div class="mask d-flex align-items-center h-100">
+                <div class="container d-flex justify-content-center">
+                    <div class="card shadow-2-strong w-100" style="background-color: #f5f7fa;">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-borderless mb-0">
+                                    <thead>
+                                    <tr>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Description</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">Creation Date</th>
+                                        <th scope="col">Importance</th>
+                                        <th scope="col">Action</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for task in all_tasks %}
+                                        <tr>
+                                            <td>
+                                                <span title="{{ task.name }}">
+                                                    {{ task.name[:15] }}{% if task.name|length > 15 %}
+                                                        ...{% endif %}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                  <span title="{{ task.description }}">
+                                                    {{ task.description[:30] }}{% if task.description|length > 30 %}
+                                                        ...{% endif %}
+                                                  </span>
+                                            </td>
+                                            <td>{{ task.status }}</td>
+                                            <td>{{ task.date }}</td>
+                                            <td>
+                                                <div class="star-rating-list">
+                                                    <i class="bi bi-star-fill-list"></i>
+                                                    {% for _ in range(task.importance) %}
+                                                        <i class="bi bi-star-fill"></i>
+                                                    {% endfor %}
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <a class="class= btn btn-sm btn-success"
+                                                   href="{{ url_for('views.update_tasks_done', task_id=task.id) }}">Done</a>
+                                                <a class="class= btn btn-sm btn-warning"
+                                                   href="{{ url_for('views.update_tasks', task_id=task.id) }}">Update</a>
+                                                <a class="class= btn btn-sm btn-danger"
+                                                   href="{{ url_for('views.delete_task', task_id=task.id) }}">Delete</a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% include "footer.html" %}
+
