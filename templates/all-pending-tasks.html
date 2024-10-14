@@ -3,7 +3,7 @@
     <div>
 
         <!-- Page content-->
-        <div class="container-fluid">
+        <div class="container-fluid mt-3">
             <div class="mask d-flex align-items-center h-100">
                 <div class="container d-flex justify-content-center">
                     <div class="card shadow-2-strong w-100" style="background-color: #f5f7fa;">
@@ -24,9 +24,14 @@
                                     {% for task in all_tasks %}
                                         {% if task.status == "Open" %}
                                             <tr>
-                                                <td>{{ task.name }}</td>
                                                 <td>
-                                                  <span class="description-wrapper" title="{{ task.description }}">
+                                                <span title="{{ task.name }}">
+                                                    {{ task.name[:15] }}{% if task.name|length > 15 %}
+                                                        ...{% endif %}
+                                                </span>
+                                                </td>
+                                                <td>
+                                                  <span title="{{ task.description }}">
                                                     {{ task.description[:30] }}{% if task.description|length > 30 %}
                                                         ...{% endif %}
                                                   </span>
@@ -43,11 +48,11 @@
                                                 </td>
                                                 <td>
                                                     <a class="class= btn btn-sm btn-success"
-                                                       href="{{ url_for('update_tasks_done', task_id=task.id) }}">Done</a>
+                                                       href="{{ url_for('views.update_tasks_done', task_id=task.id) }}">Done</a>
                                                     <a class="class= btn btn-sm btn-warning"
-                                                       href="{{ url_for('update_tasks', task_id=task.id) }}">Update</a>
+                                                       href="{{ url_for('views.update_tasks', task_id=task.id) }}">Update</a>
                                                     <a class="class= btn btn-sm btn-danger"
-                                                       href="{{ url_for('delete_task', task_id=task.id) }}">Delete</a>
+                                                       href="{{ url_for('views.delete_task', task_id=task.id) }}">Delete</a>
                                                 </td>
                                             </tr>
                                         {% endif %}

@@ -2,8 +2,8 @@ from __init__ import db
 from sqlalchemy import Integer, String, Boolean
 from sqlalchemy.orm import relationship, DeclarativeBase, Mapped, mapped_column
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, RadioField, SubmitField
-from wtforms.validators import DataRequired
+from wtforms import StringField, TextAreaField, RadioField, SubmitField, PasswordField
+from wtforms.validators import DataRequired, EqualTo
 
 
 class Task(db.Model):
@@ -24,3 +24,22 @@ class TaskForm(FlaskForm):
     description = TextAreaField('Description', validators=[DataRequired()],
                                 render_kw={"placeholder": "Enter task description", "class": "form-control", "rows": 3})
     submit = SubmitField('Submit', render_kw={"class": "btn btn-primary btn-block mb-2"})
+
+
+class LoginForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired()],
+                           render_kw={"placeholder": "Enter your username", "class": "form-control"})
+    password = PasswordField('Password', validators=[DataRequired()],
+                             render_kw={"placeholder": "Enter your password", "class": "form-control"})
+    submit = SubmitField('Login', render_kw={"class": "btn btn-primary btn-block"})
+
+
+class RegistrationForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired()],
+                           render_kw={"placeholder": "Enter your username", "class": "form-control"})
+    password = PasswordField('Password', validators=[DataRequired()],
+                             render_kw={"placeholder": "Enter your password", "class": "form-control"})
+    confirm_password = PasswordField('Confirm Password', validators=[
+        DataRequired(), EqualTo('password', message='Passwords must match.')],
+                                     render_kw={"placeholder": "Confirm your password", "class": "form-control"})
+    submit = SubmitField('Register', render_kw={"class": "btn btn-primary"})

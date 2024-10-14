@@ -34,26 +34,71 @@ def put_new_task():
     return render_template("add-tasks.html", form=form)
 
 
-@views.route('/mark-task-done')
-def update_tasks_done():
-    return render_template("all-tasks.html")
+@views.route('/update-task-done/<int:task_id>')
+def update_tasks_done(task_id):
+    task = db.session.get(Task, task_id)
+
+    if not task:
+        abort(404)
+
+    task.status = "Done"
+
+    db.session.commit()
+
+    flash("Task marked as done!", "success")
+    return redirect(url_for('views.get_all_tasks'))
 
 
-@views.route('/delete-task')
-def delete_task():
-    return render_template("all-tasks.html")
+@views.route('/delete-task/<int:task_id>')
+def delete_task(task_id):
+    task = db.session.get(Task, task_id)
+
+    if not task:
+        abort(404)
+
+    db.session.delete(task)
+    db.session.commit()
+
+    flash("Task deleted successfully!", "success")
+    return redirect(url_for('views.get_all_tasks'))
 
 
 @views.route('/all-pending-tasks')
 def get_all_pending_tasks():
-    return render_template("all-pending-tasks.html")
+    result = db.session.execute(
+        db.select(Task).order_by(Task.importance.desc())
+    )
+    tasks = result.scalars().all()
+    return render_template("all-pending-tasks.html", all_tasks=tasks)
 
 
 @views.route('/all-done-tasks')
 def get_all_done_tasks():
-    return render_template("all-done-tasks.html")
+    result = db.session.execute(
+        db.select(Task).order_by(Task.importance.desc())
+    )
+    tasks = result.scalars().all()
+    return render_template("all-done-tasks.html", all_tasks=tasks)
 
 
-@views.route('/update-tasks')
-def update_tasks():
-    return render_template("update-tasks.html")
+@views.route('/update-task/<int:task_id>', methods=['GET', 'POST'])
+def update_tasks(task_id):
+    task = db.session.get(Task, task_id)
+
+    if not task:
+        abort(404)
+
+    form = TaskForm(obj=task)
+
+    if form.validate_on_submit():
+        task.name = form.name.data
+        task.importance = form.importance.data
+        task.description = form.description.data
+
+        db.session.commit()
+
+        flash("Task updated successfully!", "success")
+        return redirect(url_for('views.get_all_tasks'))
+
+    return render_template("update-tasks.html", form=form)
+

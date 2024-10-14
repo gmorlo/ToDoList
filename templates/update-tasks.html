@@ -1,12 +1,34 @@
 {% include "header.html" %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.5.0/font/bootstrap-icons.css" rel="stylesheet">
+
 <div>
     <div>
-
-        <!-- Page content-->
         <div class="container-fluid">
-            <h1 class="mt-4">Update Tasks:</h1>
+            <form class="form-container" method="post">
+                {{ form.hidden_tag() }}
+                <div class="form-row align-items-center">
+                    <div class="form-group mb-2">
+                        {{ form.name.label(class="form-label") }}
+                        {{ form.name }}
+                    </div>
+                    <div class="form-group mb-2">
+                        {{ form.importance.label(class="form-label") }}
+                        <div class="star-rating">
+                            {% for value, label in form.importance.choices %}
+                                <input type="radio" id="star{{ value }}" name="{{ form.importance.name }}"
+                                       value="{{ value }}" {% if form.importance.data == value %}checked{% endif %}>
+                                <label for="star{{ value }}" class="bi bi-star-fill"></label>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group mb-2">
+                    {{ form.description.label(class="form-label") }}
+                    {{ form.description }}
+                </div>
+                {{ form.submit(value='Update') }}
+            </form>
         </div>
     </div>
 </div>
 {% include "footer.html" %}
-
