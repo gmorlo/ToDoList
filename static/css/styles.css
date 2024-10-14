@@ -12511,3 +12511,12 @@ body.sb-sidenav-toggled #wrapper #sidebar-wrapper {
     color: #ffc107;
     cursor: pointer;
 }
+/* Add this CSS either in your main CSS file or inside a <style> block in your template */
+.alert-container {
+    min-height: 50px; /* Set the height for the alert container */
+    visibility: hidden; /* Make it invisible if there are no alerts */
+}
+
+.alert-container .alert {
+    visibility: visible; /* Alerts themselves will be visible when they exist */
+}

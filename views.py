@@ -1,5 +1,5 @@
 from datetime import date
-
+from flask_login import login_required, current_user
 from flask import Blueprint, Flask, abort, render_template, redirect, url_for, flash
 from models import *
 from __init__ import db
@@ -8,15 +8,16 @@ views = Blueprint("views", __name__)
 
 
 @views.route('/')
+@login_required
 def get_all_tasks():
-    result = db.session.execute(
-        db.select(Task).order_by(Task.importance.desc())
-    )
-    tasks = result.scalars().all()
+    tasks = Task.query.filter_by(
+        user_id=current_user.id).order_by(Task.importance.desc()).all()
+
     return render_template("all-tasks.html", all_tasks=tasks)
 
 
 @views.route('/new-task', methods=['GET', 'POST'])
+@login_required
 def put_new_task():
     form = TaskForm()
     if form.validate_on_submit():
@@ -25,7 +26,8 @@ def put_new_task():
             importance=form.importance.data,
             description=form.description.data,
             status="Open",
-            date=date.today().strftime("%B %d, %Y")
+            date=date.today().strftime("%B %d, %Y"),
+            user_id = current_user.id
         )
         db.session.add(new_task)
         db.session.commit()
@@ -35,8 +37,9 @@ def put_new_task():
 
 
 @views.route('/update-task-done/<int:task_id>')
+@login_required
 def update_tasks_done(task_id):
-    task = db.session.get(Task, task_id)
+    task = Task.query.filter_by(id=task_id, user_id=current_user.id).first()
 
     if not task:
         abort(404)
@@ -50,8 +53,9 @@ def update_tasks_done(task_id):
 
 
 @views.route('/delete-task/<int:task_id>')
+@login_required
 def delete_task(task_id):
-    task = db.session.get(Task, task_id)
+    task = Task.query.filter_by(id=task_id, user_id=current_user.id).first()
 
     if not task:
         abort(404)
@@ -64,26 +68,29 @@ def delete_task(task_id):
 
 
 @views.route('/all-pending-tasks')
+@login_required
 def get_all_pending_tasks():
-    result = db.session.execute(
-        db.select(Task).order_by(Task.importance.desc())
-    )
-    tasks = result.scalars().all()
+    tasks = Task.query.filter_by(
+        user_id=current_user.id,
+        status="Open").order_by(Task.importance.desc()).all()
+
     return render_template("all-pending-tasks.html", all_tasks=tasks)
 
 
 @views.route('/all-done-tasks')
+@login_required
 def get_all_done_tasks():
-    result = db.session.execute(
-        db.select(Task).order_by(Task.importance.desc())
-    )
-    tasks = result.scalars().all()
+    tasks = Task.query.filter_by(
+        user_id=current_user.id,
+        status="Done").order_by(Task.importance.desc()).all()
+
     return render_template("all-done-tasks.html", all_tasks=tasks)
 
 
 @views.route('/update-task/<int:task_id>', methods=['GET', 'POST'])
+@login_required
 def update_tasks(task_id):
-    task = db.session.get(Task, task_id)
+    task = Task.query.filter_by(id=task_id, user_id=current_user.id).first()
 
     if not task:
         abort(404)
@@ -101,4 +108,3 @@ def update_tasks(task_id):
         return redirect(url_for('views.get_all_tasks'))
 
     return render_template("update-tasks.html", form=form)
-

@@ -7,29 +7,26 @@
         <form method="post">
             {{ form.hidden_tag() }}
             <div class="form-group mb-3">
-                {{ form.username.label(class="form-label") }} <!-- Username field -->
-                {{ form.username(class="form-control", placeholder="Enter your username") }} <!-- Input for username -->
+                {{ form.username.label(class="form-label") }}
+                {{ form.username(class="form-control", placeholder="Enter your username") }}
             </div>
             <div class="form-group mb-3">
-                {{ form.password.label(class="form-label") }} <!-- Password field -->
-                {{ form.password(class="form-control", placeholder="Enter your password") }} <!-- Input for password -->
+                {{ form.password.label(class="form-label") }}
+                {{ form.password(class="form-control", placeholder="Enter your password") }}
             </div>
             <div class="form-group mb-3">
-                {{ form.confirm_password.label(class="form-label") }} <!-- Confirm Password field -->
+                {{ form.confirm_password.label(class="form-label") }}
                 {{ form.confirm_password(class="form-control", placeholder="Confirm your password") }}
-                <!-- Input for confirm password -->
             </div>
             <div class="text-center">
-                {{ form.submit(class="btn btn-primary mb-2") }} <!-- Submit button -->
+                {{ form.submit(class="btn btn-primary mb-2") }}
             </div>
         </form>
         <div class="text-center">
             <a href="{{ url_for('views.get_all_tasks') }}" class="btn btn-secondary">Back to Home</a>
-            <!-- Back to home button -->
-            <a href="{{ url_for('auth.login') }}" class="btn btn-outline-primary">Login</a> <!-- Login button -->
+            <a href="{{ url_for('auth.login') }}" class="btn btn-outline-primary">Login</a>
         </div>
     </div>
 </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+{% include "footer.html" %}
+

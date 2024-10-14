@@ -1,9 +1,10 @@
 from __init__ import db
-from sqlalchemy import Integer, String, Boolean
+from sqlalchemy import Integer, String, Boolean, ForeignKey
 from sqlalchemy.orm import relationship, DeclarativeBase, Mapped, mapped_column
 from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, RadioField, SubmitField, PasswordField
 from wtforms.validators import DataRequired, EqualTo
+from flask_login import UserMixin
 
 
 class Task(db.Model):
@@ -14,6 +15,8 @@ class Task(db.Model):
     description: Mapped[str] = mapped_column(String(250), nullable=True)
     status: Mapped[str] = mapped_column(String(250), nullable=False)
     date: Mapped[str] = mapped_column(String(250), nullable=False)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey('users.id'), nullable=False)
+    user = relationship("User", back_populates="tasks")
 
 
 class TaskForm(FlaskForm):
@@ -31,7 +34,7 @@ class LoginForm(FlaskForm):
                            render_kw={"placeholder": "Enter your username", "class": "form-control"})
     password = PasswordField('Password', validators=[DataRequired()],
                              render_kw={"placeholder": "Enter your password", "class": "form-control"})
-    submit = SubmitField('Login', render_kw={"class": "btn btn-primary btn-block"})
+    submit = SubmitField('Login', render_kw={"class": "btn btn-primary"})
 
 
 class RegistrationForm(FlaskForm):
@@ -43,3 +46,11 @@ class RegistrationForm(FlaskForm):
         DataRequired(), EqualTo('password', message='Passwords must match.')],
                                      render_kw={"placeholder": "Confirm your password", "class": "form-control"})
     submit = SubmitField('Register', render_kw={"class": "btn btn-primary"})
+
+
+class User(db.Model, UserMixin):
+    __tablename__ = "users"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    username: Mapped[str] = mapped_column(String(150), unique=True, nullable=False)
+    password: Mapped[str] = mapped_column(String(256), nullable=False)
+    tasks = relationship("Task", back_populates="user", lazy=True)
